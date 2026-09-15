@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 512" fill="none"
+     stroke-linecap="round" stroke-linejoin="round">
+  <title>Stratechna Meet</title>
+
+
+  <rect x="112" y="168" width="216" height="176" rx="32" stroke="#8a9bab" stroke-width="32"/>
+  <path d="M 360 220 L 400 192 V 320 L 360 292 Z" stroke="#ea5c55" stroke-width="32"/>
+  <text x="480" y="236" fill="#c8d0d8" stroke="none"
+        font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="136" font-weight="700">Stratechna</text>
+  <text x="484" y="372" fill="#ea5c55" stroke="none"
+        font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="104" font-weight="500">Meet</text>
+</svg>

@@ -1,0 +1,42 @@
+name: Build Stratechna Meet
+
+# Sem rebuild agendado: a versão do Jitsi está fixa no Dockerfile e só muda de
+# propósito. Um rebuild automático traria uma versão nova sem ninguém olhar para
+# as trocas de marca — que é exactamente o que o aplicar.py existe para impedir.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  IMAGEM: ghcr.io/stratechna/stratechna-meet
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Versão fixada do Jitsi
+        id: v
+        run: |
+          V=$(sed -nE 's/^ARG JITSI_VERSION=(stable-[0-9]+)$/\1/p' Dockerfile)
+          test -n "$V" || { echo "JITSI_VERSION não encontrada no Dockerfile"; exit 1; }
+          echo "versao=$V" >> "$GITHUB_OUTPUT"
+
+      - name: Build (o aplicar.py falha se alguma troca deixar de encaixar)
+        run: docker build --pull -t meet:teste --label org.opencontainers.image.revision=${{ github.sha }} .
+
+      - name: Verificar a marca na imagem construída
+        run: bash branding/verificar.sh meet:teste
+
+      - name: Publicar (só chega aqui se a verificação passou)
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          for tag in ${{ steps.v.outputs.versao }} latest; do
+            docker tag meet:teste "$IMAGEM:$tag"
+            docker push -q "$IMAGEM:$tag"
+          done
