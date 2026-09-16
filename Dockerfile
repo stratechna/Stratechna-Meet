@@ -30,3 +30,13 @@ LABEL org.opencontainers.image.source="https://github.com/stratechna/Stratechna-
 
 COPY --from=marca /trabalho/jitsi-meet/ /usr/share/jitsi-meet/
 COPY --from=marca /trabalho/defaults/ /defaults/
+
+# A imagem do Jitsi não traz ficheiro de licença nenhum, e nós PUBLICAMOS esta
+# imagem — publicar é distribuir, e a Apache 2.0 obriga a acompanhar a licença
+# e a declarar as alterações feitas (cláusulas 4(a) e 4(b)). Correr como serviço
+# não obrigaria; publicar obriga.
+#
+# Ficam em /static/ porque é uma das pastas que o nginx do Jitsi serve — assim
+# estão dentro da imagem E alcançáveis em https://.../static/NOTICE.
+COPY branding/LICENSE-jitsi /usr/share/jitsi-meet/static/LICENSE
+COPY branding/NOTICE        /usr/share/jitsi-meet/static/NOTICE

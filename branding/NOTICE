@@ -1,0 +1,26 @@
+Stratechna Meet
+Copyright 2026 Stratechna — Tecnologia e Serviços Empresariais
+
+Este produto inclui software desenvolvido pelo projecto Jitsi
+(https://jitsi.org), distribuído ao abrigo da Licença Apache, Versão 2.0.
+O texto da licença está em LICENSE-jitsi, nesta mesma pasta.
+
+ALTERAÇÕES FEITAS PELA STRATECHNA
+A Apache 2.0, na cláusula 4(b), obriga a declarar as alterações. São estas, e
+só estas — nenhum comportamento do Jitsi foi alterado:
+
+  * o nome do produto apresentado ao utilizador passa a «Stratechna Meet»
+    (title.html, APP_NAME e PROVIDER_NAME em interface_config.js, e as
+    ocorrências do nome nos ficheiros de tradução);
+  * a hiperligação do logótipo passa a apontar para https://stratechna.com;
+  * o logótipo, o favicon e a imagem de partilha são substituídos pelos
+    símbolos da Stratechna;
+  * dois comentários de JavaScript que mencionavam o nome do fornecedor foram
+    reescritos.
+
+O código que produz estas alterações está em branding/aplicar.py, no
+repositório https://github.com/stratechna/Stratechna-Meet.
+
+MARCAS
+«Jitsi» é marca dos respectivos titulares. O Stratechna Meet não é afiliado
+nem endossado pelo projecto Jitsi.
