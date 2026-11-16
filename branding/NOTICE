@@ -17,6 +17,14 @@ só estas — nenhum comportamento do Jitsi foi alterado:
     símbolos da Stratechna;
   * dois comentários de JavaScript que mencionavam o nome do fornecedor foram
     reescritos.
+  * as frases com o nome do produto no catálogo inglês embutido em
+    libs/app.bundle.min.js passam a dizer «Stratechna Meet» (só o texto; as
+    chaves e o código ficam iguais);
+  * uma folha de estilo própria (css/stratechna-meet.css, incluída pelo
+    plugin.head.html) e um tema de marca dinâmica (static/stratechna-marca.json,
+    pela variável DYNAMIC_BRANDING_URL) dão à interface a letra DM Sans (SIL OFL
+    1.1, em fonts/) e as cores da Stratechna, e escondem o rodapé que anuncia as
+    aplicações móveis do Jitsi.
 
 O código que produz estas alterações está em branding/aplicar.py, no
 repositório https://github.com/stratechna/Stratechna-Meet.

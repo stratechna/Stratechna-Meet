@@ -13,6 +13,7 @@ Uso: aplicar.py <raiz> <ficheiros>
   <raiz>      a árvore com jitsi-meet/ e defaults/ tirada da imagem original
   <ficheiros> a pasta com os nossos SVG/PNG/ICO
 """
+import json
 import pathlib
 import re
 import shutil
@@ -88,6 +89,84 @@ copiar("watermark.svg", WEB / "images" / "watermark.svg")
 copiar("favicon.svg", WEB / "images" / "favicon.svg")
 copiar("stratechna-meet.png", WEB / "images" / "stratechna-meet.png")
 copiar("apple-touch-icon.png", WEB / "images" / "apple-touch-icon.png")
+
+# ── 3b. o catálogo inglês EMBUTIDO no pacote da app ────────────────────────
+# O inglês não vem só do lang/main.json: o app.bundle.min.js leva uma cópia
+# compilada do catálogo, e é essa que se usa quando o browser está em inglês.
+# Por isso a página de entrada dizia «Jitsi Meet» e «Jitsi on mobile» com os
+# ficheiros de idioma todos limpos — a verificação só olhava para os JSON.
+#
+# Troca-se só o VALOR de cada frase, chave a chave, a partir do main.json
+# original (antes do passo 4): cada par "chave":"valor" tem de aparecer
+# exactamente uma vez no pacote, ou o build pára. Os identificadores de código
+# não se tocam.
+def _folhas(o, caminho=()):
+    if isinstance(o, dict):
+        for k, v in o.items():
+            yield from _folhas(v, caminho + (k,))
+    elif isinstance(o, str):
+        yield caminho, o
+
+
+def _marca_texto(t: str) -> str:
+    t = t.replace("Jitsi Meet", NOME)
+    return re.sub(r"(?<![A-Za-z])Jitsi(?![A-Za-z])", NOME, t)
+
+
+def _no_pacote(chave: str, valor: str) -> str:
+    # O catálogo está dentro de uma string JS entre plicas: as plicas do texto
+    # vão escapadas.
+    return json.dumps({chave: valor}, ensure_ascii=False,
+                      separators=(",", ":"))[1:-1].replace("'", "\\'")
+
+
+pacote = WEB / "libs" / "app.bundle.min.js"
+catalogo_en = json.loads((WEB / "lang" / "main.json").read_text(encoding="utf-8"))
+if pacote.exists():
+    js = pacote.read_text(encoding="utf-8")
+    n_trocas = 0
+    for caminho, valor in _folhas(catalogo_en):
+        if not re.search(r"(?<![A-Za-z])Jitsi(?![A-Za-z])", valor):
+            continue
+        velho = _no_pacote(caminho[-1], valor)
+        n = js.count(velho)
+        if n != 1:
+            falhas.append(f"app.bundle.min.js: «{'.'.join(caminho)}» apareceu {n}x, esperava 1")
+            continue
+        js = js.replace(velho, _no_pacote(caminho[-1], _marca_texto(valor)))
+        n_trocas += 1
+    if n_trocas < 5:
+        falhas.append(f"app.bundle.min.js: só {n_trocas} frases do catálogo embutido, esperava >= 5")
+    pacote.write_text(js, encoding="utf-8")
+    feitos.append(f"libs/app.bundle.min.js: {n_trocas} frases do catálogo inglês embutido")
+else:
+    falhas.append(f"{pacote}: não existe")
+
+# ── 3c. letra e paleta Stratechna ──────────────────────────────────────────
+# A folha própria entra pelo plugin.head.html — o ficheiro que o index.html já
+# inclui (SSI) e que o upstream deixa VAZIO precisamente para isto. Se um dia
+# deixar de estar vazio ou de ser incluído, o build pára e olha-se.
+cabeca = WEB / "plugin.head.html"
+indice = WEB / "index.html"
+if not cabeca.exists() or "plugin.head.html" not in indice.read_text(encoding="utf-8"):
+    falhas.append("plugin.head.html: não existe ou o index.html já não o inclui")
+elif cabeca.read_text(encoding="utf-8").strip():
+    falhas.append("plugin.head.html: o upstream passou a pôr lá conteúdo — rever")
+else:
+    cabeca.write_text('<link rel="stylesheet" href="/css/stratechna-meet.css?v=1">\n',
+                      encoding="utf-8")
+    feitos.append("plugin.head.html -> css/stratechna-meet.css")
+copiar("stratechna-meet.css", WEB / "css" / "stratechna-meet.css")
+# A letra é servida pelo próprio Meet (pasta /fonts, já servida pelo nginx do
+# Jitsi): nada vai ao Google.
+for f in sorted((NOSSOS / "fonts").glob("*")):
+    copiar(f"fonts/{f.name}", WEB / "fonts" / f.name)
+# O tema da sala (React) só aceita cores pelo tema de marca dinâmica — o ponto
+# oficial (config.dynamicBrandingUrl, que a imagem define a partir da variável
+# DYNAMIC_BRANDING_URL; ver o Dockerfile).
+copiar("stratechna-marca.json", WEB / "static" / "stratechna-marca.json")
+if "DYNAMIC_BRANDING_URL" not in (DEFAULTS / "settings-config.js").read_text(encoding="utf-8"):
+    falhas.append("settings-config.js: a variável DYNAMIC_BRANDING_URL deixou de existir")
 
 # ── 4. as traduções ────────────────────────────────────────────────────────
 # Só sete ocorrências por idioma, todas em texto que o utilizador lê. A ordem

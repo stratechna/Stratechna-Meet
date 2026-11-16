@@ -1,0 +1,86 @@
+/* Stratechna Meet — letra e paleta Stratechna (PLANO-ASPECTO-ORBIT-APPS.md §1).
+ *
+ * Entra pelo plugin.head.html, o ponto de extensão vazio que o Jitsi deixa
+ * para isto; nenhuma folha do upstream é alterada. A sala (React/JSS) recebe
+ * as cores pelo tema de marca dinâmica (static/stratechna-marca.json); aqui
+ * trata-se a letra e a página de entrada, que são CSS clássico. */
+
+/* DM Sans (SIL OFL 1.1, ver fonts/LICENSE-DM-Sans.txt), servida pelo próprio Orbit:
+   nada vai ao Google (RGPD). Usada pela secretária, pela entrada e pelas apps em frappe-ui. */
+@font-face {
+	font-family: "DM Sans";
+	font-style: normal;
+	font-weight: 100 1000;
+	font-display: swap;
+	src: url("/fonts/dm-sans-latin-ext-wght-normal.woff2") format("woff2-variations");
+	unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+	font-family: "DM Sans";
+	font-style: normal;
+	font-weight: 100 1000;
+	font-display: swap;
+	src: url("/fonts/dm-sans-latin-wght-normal.woff2") format("woff2-variations");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+	font-family: "DM Sans";
+	font-style: italic;
+	font-weight: 100 1000;
+	font-display: swap;
+	src: url("/fonts/dm-sans-latin-wght-italic.woff2") format("woff2-variations");
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ── Letra ──────────────────────────────────────────────────────────────────
+   O Jitsi fixa a família com !important em body/button/input; a mesma força
+   aqui, com mais especificidade, e só para a família — os tamanhos ficam. */
+html body, html body button, html body input, html body select, html body textarea,
+html body [lang|=en], html body .navigate-section-tile-title,
+html body .navigate-section-tile-body, html body .badge-round {
+	font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif !important;
+}
+body { -webkit-font-smoothing: antialiased; }
+
+/* ── Página de entrada ──────────────────────────────────────────────────────
+   Faixa de topo em ardósia com a elipse do Orbit esbatida, em vez da fotografia
+   da Terra; vermelho só no botão «Iniciar reunião». */
+.welcome .header {
+	background-color: #1a2a33 !important;
+	background-image:
+		url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='none'%3E%3Cellipse cx='256' cy='256' rx='230' ry='112' stroke='%23c8d0d8' stroke-opacity='.08' stroke-width='10' transform='rotate(-30 256 256)'/%3E%3Cellipse cx='256' cy='256' rx='168' ry='82' stroke='%23c8d0d8' stroke-opacity='.08' stroke-width='8' transform='rotate(-30 256 256)'/%3E%3Ccircle cx='256' cy='256' r='40' fill='%23ea5c55' fill-opacity='.10'/%3E%3C/svg%3E"),
+		linear-gradient(160deg, #22343f 0%, #1a2a33 55%, #121b21 100%) !important;
+	background-repeat: no-repeat !important;
+	background-position: right -120px bottom -160px, center !important;
+	background-size: 560px auto, cover !important;
+}
+.welcome .header .header-text-title { font-weight: 600; letter-spacing: -.01em; }
+.welcome .header .header-text-subtitle { color: #cfd7de; font-weight: 500; }
+.welcome .header ::placeholder { color: #707f87; }
+.welcome .header #enter_room .join-meeting-container,
+.welcome .header #enter_room .enter-room-input-container .enter-room-input { color: #16252e; }
+.welcome .header #enter_room .enter-room-input-container .enter-room-input.focus-visible { outline-color: #2c414e; }
+.welcome .welcome-page-button {
+	background: #b20009 !important;
+	border-radius: 4px;
+	font-weight: 600;
+}
+.welcome .welcome-page-button:hover { background: #8c0007 !important; }
+.welcome .welcome-page-button:active { background: #730006 !important; }
+.welcome .welcome-page-button:focus-within { outline-color: #2c414e; }
+.welcome .welcome-page-settings { background: rgba(255, 255, 255, .14); }
+
+/* Lista de reuniões recentes: cartão neutro em ardósia clara (era azul-bebé). */
+.welcome .welcome-cards-container { color: #16252e; }
+.welcome .welcome-card--blue { background: #eff3f6 !important; }
+.welcome .welcome-card--grey { background: #f6f9fa !important; }
+.welcome .welcome-card--dark { background: #2b3b44 !important; }
+.welcome .tab-container .tab-buttons,
+.welcome .tab-container .tab-buttons [role=tab] { background-color: #dbe3e8; color: #2b3b44; }
+.welcome .tab-container .tab-buttons [role=tab][aria-selected=true] { background-color: #fff; }
+
+/* O rodapé só anuncia as apps móveis do fabricante (lojas da Apple, Google e
+   F-Droid com a marca dele) — não é nosso produto e sai. */
+.welcome .welcome-footer { display: none !important; }
+
+::selection { background: rgba(178, 0, 9, .16); }

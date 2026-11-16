@@ -1,0 +1,28 @@
+{
+  "logoClickUrl": "https://stratechna.com",
+  "logoImageUrl": "/images/watermark.svg",
+  "backgroundColor": "#121b21",
+  "customTheme": {
+    "palette": {
+      "uiBackground": "#020406",
+      "ui01": "#0d151a",
+      "ui02": "#1f2b33",
+      "ui03": "#303f49",
+      "ui04": "#45555e",
+      "ui05": "#5a6972",
+      "ui06": "#798891",
+      "ui07": "#98a5ad",
+      "ui08": "#b9c4cb",
+      "ui09": "#dae2e7",
+      "action01": "#b20009",
+      "action01Hover": "#8c0007",
+      "action01Active": "#730006",
+      "action02": "#dae2e7",
+      "action02Hover": "#ffffff",
+      "action02Active": "#b9c4cb",
+      "action03Hover": "#303f49",
+      "action03Active": "#1f2b33",
+      "disabled01": "#b9c4cb"
+    }
+  }
+}

@@ -70,6 +70,27 @@ for F in main.json main-pt.json main-de.json; do
   [ "$n" = 0 ] && ok "lang/$F sem «Jitsi»" || falha "lang/$F com $n «Jitsi»"
 done
 
+echo "== catálogo inglês embutido no pacote da app =="
+# Era por aqui que a página de entrada dizia «Jitsi Meet» com os JSON limpos.
+P=$(obter "$B/libs/app.bundle.min.js")
+for chave in headerTitle jitsiOnMobile productLabel; do
+  if printf '%s' "$P" | grep -qE "\"$chave\":\"[^\"]*Jitsi"; then falha "pacote: «$chave» ainda com «Jitsi»"; else ok "pacote: «$chave»"; fi
+done
+printf '%s' "$P" | grep -q '"headerTitle":"Stratechna Meet"' && ok "título da página de entrada" || falha "headerTitle não é o nosso"
+
+echo "== letra e paleta Stratechna =="
+printf '%s' "$H" | grep -q 'css/stratechna-meet.css' && ok "folha própria no HTML (plugin.head.html)" || falha "folha própria não incluída no HTML"
+CSS=$(obter "$B/css/stratechna-meet.css") && ok "css/stratechna-meet.css servida" || falha "css/stratechna-meet.css não servida"
+printf '%s' "$CSS" | grep -q '#b20009' && ok "vermelho de acção na folha" || falha "folha sem #b20009"
+for f in dm-sans-latin-wght-normal.woff2 dm-sans-latin-ext-wght-normal.woff2 dm-sans-latin-wght-italic.woff2; do
+  if [ "$(obter "$B/fonts/$f" | sha256sum | cut -c1-16)" = "$(sha256sum < "$DIR/ficheiros/fonts/$f" | cut -c1-16)" ]; then ok "fonts/$f servida pelo Meet"; else falha "fonts/$f não servida"; fi
+done
+if printf '%s%s' "$H" "$CSS" | grep -qi 'fonts.googleapis\|fonts.gstatic'; then falha "pedido ao Google Fonts"; else ok "nada vai ao Google Fonts"; fi
+obter "$B/static/stratechna-marca.json" | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["customTheme"]["palette"]["action01"]=="#b20009"' \
+  && ok "tema de marca dinâmica (action01 = #b20009)" || falha "static/stratechna-marca.json inválido"
+obter "$B/config.js" | grep -q "config.dynamicBrandingUrl = '/static/stratechna-marca.json'" \
+  && ok "config.dynamicBrandingUrl" || falha "config.js sem dynamicBrandingUrl"
+
 echo
 if [ $FALHAS -gt 0 ]; then
   echo "VERIFICAÇÃO FALHOU ($FALHAS) — a imagem não deve ser publicada"

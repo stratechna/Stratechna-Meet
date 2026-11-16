@@ -31,6 +31,12 @@ LABEL org.opencontainers.image.source="https://github.com/stratechna/Stratechna-
 COPY --from=marca /trabalho/jitsi-meet/ /usr/share/jitsi-meet/
 COPY --from=marca /trabalho/defaults/ /defaults/
 
+# Cores da sala (React): pelo tema de marca dinâmica, o ponto oficial do Jitsi.
+# O settings-config.js transforma esta variável em config.dynamicBrandingUrl;
+# o ficheiro é nosso e vem dentro da imagem (static/stratechna-marca.json).
+# Caminho absoluto: a sala vive em /<inquilino>/<sala>.
+ENV DYNAMIC_BRANDING_URL=/static/stratechna-marca.json
+
 # A imagem do Jitsi não traz ficheiro de licença nenhum, e nós PUBLICAMOS esta
 # imagem — publicar é distribuir, e a Apache 2.0 obriga a acompanhar a licença
 # e a declarar as alterações feitas (cláusulas 4(a) e 4(b)). Correr como serviço
