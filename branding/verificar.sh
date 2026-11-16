@@ -71,12 +71,14 @@ for F in main.json main-pt.json main-de.json; do
 done
 
 echo "== catálogo inglês embutido no pacote da app =="
+# Here-strings e não `printf | grep -q`: com pipefail, o grep sai ao 1.º
+# resultado, o printf de 4 MB leva SIGPIPE e o teste dava falha falsa.
 # Era por aqui que a página de entrada dizia «Jitsi Meet» com os JSON limpos.
 P=$(obter "$B/libs/app.bundle.min.js")
 for chave in headerTitle jitsiOnMobile productLabel; do
-  if printf '%s' "$P" | grep -qE "\"$chave\":\"[^\"]*Jitsi"; then falha "pacote: «$chave» ainda com «Jitsi»"; else ok "pacote: «$chave»"; fi
+  if grep -qE "\"$chave\":\"[^\"]*Jitsi" <<<"$P"; then falha "pacote: «$chave» ainda com «Jitsi»"; else ok "pacote: «$chave»"; fi
 done
-printf '%s' "$P" | grep -q '"headerTitle":"Stratechna Meet"' && ok "título da página de entrada" || falha "headerTitle não é o nosso"
+grep -q '"headerTitle":"Stratechna Meet"' <<<"$P" && ok "título da página de entrada" || falha "headerTitle não é o nosso"
 
 echo "== letra e paleta Stratechna =="
 printf '%s' "$H" | grep -q 'css/stratechna-meet.css' && ok "folha própria no HTML (plugin.head.html)" || falha "folha própria não incluída no HTML"
